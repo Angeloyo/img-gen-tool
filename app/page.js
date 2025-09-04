@@ -152,6 +152,13 @@ export default function Home() {
             <h2 className="text-xl font-medium mb-6">settings</h2>
             
             <div className="mb-6">
+              <label className="block text-sm font-mono mb-2">Model</label>
+              <select className="w-full p-3 border border-gray-300 text-black text-sm font-mono bg-white">
+                <option value="gpt-image-1">gpt-image-1</option>
+              </select>
+            </div>
+
+            <div className="mb-6">
               <label className="block text-sm font-mono mb-2">OpenAI API Key</label>
               <input
                 type="password"
