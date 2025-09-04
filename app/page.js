@@ -12,7 +12,16 @@ export default function Home() {
 
   useEffect(() => {
     const savedKey = localStorage.getItem('openai-api-key');
+    const savedSize = localStorage.getItem('image-size');
+    const savedQuality = localStorage.getItem('image-quality');
+    const savedBackground = localStorage.getItem('image-background');
+    const savedPrompt = localStorage.getItem('last-prompt');
+    
     if (savedKey) setApiKey(savedKey);
+    if (savedSize) setSize(savedSize);
+    if (savedQuality) setQuality(savedQuality);
+    if (savedBackground) setBackground(savedBackground);
+    if (savedPrompt) setPrompt(savedPrompt);
   }, []);
 
   const generateImage = async () => {
@@ -73,6 +82,9 @@ export default function Home() {
 
   const saveApiKey = () => {
     localStorage.setItem('openai-api-key', apiKey);
+    localStorage.setItem('image-size', size);
+    localStorage.setItem('image-quality', quality);
+    localStorage.setItem('image-background', background);
     setShowSettings(false);
   };
 
@@ -97,7 +109,10 @@ export default function Home() {
         <input
           type="text"
           value={prompt}
-          onChange={(e) => setPrompt(e.target.value)}
+          onChange={(e) => {
+            setPrompt(e.target.value);
+            localStorage.setItem('last-prompt', e.target.value);
+          }}
           placeholder="describe what you want to generate..."
           className="w-full p-4 border border-gray-300 text-black text-sm font-mono bg-white"
         />
@@ -205,13 +220,21 @@ export default function Home() {
 
             <div className="mb-6">
               <label className="block text-sm font-mono mb-2">OpenAI API Key</label>
-              <input
-                type="password"
-                value={apiKey}
-                onChange={(e) => setApiKey(e.target.value)}
-                placeholder="sk-..."
-                className="w-full p-3 border border-gray-300 text-black text-sm font-mono bg-white"
-              />
+              <div className="flex gap-2">
+                <input
+                  type="password"
+                  value={apiKey}
+                  onChange={(e) => setApiKey(e.target.value)}
+                  placeholder="sk-..."
+                  className="flex-1 p-3 border border-gray-300 text-black text-sm font-mono bg-white"
+                />
+                <button
+                  onClick={clearApiKey}
+                  className="px-3 py-3 border border-gray-300 text-black text-sm hover:bg-gray-100 transition-colors"
+                >
+                  ×
+                </button>
+              </div>
             </div>
             
             <div className="mb-6 text-xs text-gray-600 font-mono leading-relaxed">
@@ -227,12 +250,6 @@ export default function Home() {
                 className="px-6 py-2 border border-black bg-white text-black text-sm hover:bg-black hover:text-white transition-colors"
               >
                 save
-              </button>
-              <button
-                onClick={clearApiKey}
-                className="px-6 py-2 border border-gray-300 bg-white text-black text-sm hover:bg-gray-100 transition-colors"
-              >
-                clear
               </button>
               <button
                 onClick={() => setShowSettings(false)}
