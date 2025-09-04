@@ -123,7 +123,7 @@ export default function Home() {
                 className="w-full h-full object-cover border border-gray-200"
               />
             )}
-            <div className="absolute inset-0 bg-black bg-opacity-70 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-between p-3">
+            <div className="absolute inset-0 bg-black/70 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-between p-3">
               <p className="text-white text-xs font-mono line-clamp-3">{gen.prompt}</p>
               <div className="flex gap-2 self-end">
                 {gen.status === 'complete' && (
@@ -147,8 +147,8 @@ export default function Home() {
       </div>
 
       {showSettings && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
-          <div className="bg-white p-8 border border-gray-300 max-w-md w-full">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4">
+          <div className="bg-white p-16 border border-gray-300 max-w-2xl w-full">
             <h2 className="text-xl font-medium mb-6">settings</h2>
             
             <div className="mb-6">
