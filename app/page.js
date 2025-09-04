@@ -36,6 +36,10 @@ export default function Home() {
     }
   };
 
+  const removeGeneration = (id) => {
+    setGenerations(prev => prev.filter(g => g.id !== id));
+  };
+
   return (
     <div className="p-12 max-w-5xl mx-auto">
       <h1 className="text-3xl font-medium mb-12 tracking-tight">img-gen</h1>
@@ -56,27 +60,35 @@ export default function Home() {
         </button>
       </div>
       
-      <div className="space-y-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
         {generations.map(gen => (
-          <div key={gen.id} className="border border-gray-200 p-6">
-            <p className="mb-6 text-sm font-mono text-gray-600">{gen.prompt}</p>
+          <div key={gen.id} className="relative group aspect-square">
             {gen.status === 'loading' && (
-              <div className="w-72 h-72 border border-gray-200 flex items-center justify-center">
+              <div className="w-full h-full border border-gray-200 flex items-center justify-center">
                 <span className="text-sm text-gray-500">generating...</span>
               </div>
             )}
             {gen.status === 'error' && (
-              <div className="w-72 h-72 border border-red-200 flex items-center justify-center text-red-600">
-                <span className="text-sm">error: {gen.error}</span>
+              <div className="w-full h-full border border-red-200 flex items-center justify-center text-red-600">
+                <span className="text-sm">error</span>
               </div>
             )}
             {gen.status === 'complete' && (
               <img
                 src={`data:image/png;base64,${gen.image}`}
                 alt={gen.prompt}
-                className="w-72 h-72 object-cover border border-gray-200"
+                className="w-full h-full object-cover border border-gray-200"
               />
             )}
+            <div className="absolute inset-0 bg-black bg-opacity-70 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-between p-3">
+              <p className="text-white text-xs font-mono line-clamp-3">{gen.prompt}</p>
+              <button
+                onClick={() => removeGeneration(gen.id)}
+                className="self-end px-2 py-1 text-xs bg-white text-black hover:bg-gray-200 transition-colors"
+              >
+                ×
+              </button>
+            </div>
           </div>
         ))}
       </div>
