@@ -1,21 +1,39 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export default function Home() {
   const [prompt, setPrompt] = useState('');
   const [generations, setGenerations] = useState([]);
+  const [showSettings, setShowSettings] = useState(false);
+  const [apiKey, setApiKey] = useState('');
+
+  useEffect(() => {
+    const savedKey = localStorage.getItem('openai-api-key');
+    if (savedKey) setApiKey(savedKey);
+  }, []);
 
   const generateImage = async () => {
     if (!prompt.trim()) return;
+    if (!apiKey.trim()) {
+      alert('Please set your OpenAI API key in settings');
+      setShowSettings(true);
+      return;
+    }
     
     const id = Date.now();
     setGenerations(prev => [...prev, { id, status: 'loading', prompt }]);
     
     try {
-      const response = await fetch('/api/generate-image', {
+      const response = await fetch('https://api.openai.com/v1/images/generations', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt })
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`
+        },
+        body: JSON.stringify({ 
+          model: "gpt-image-1",
+          prompt 
+        })
       });
       
       const data = await response.json();
@@ -26,7 +44,7 @@ export default function Home() {
         ));
       } else {
         setGenerations(prev => prev.map(g => 
-          g.id === id ? { ...g, status: 'complete', image: data.image } : g
+          g.id === id ? { ...g, status: 'complete', image: data.data[0].b64_json } : g
         ));
       }
     } catch (error) {
@@ -47,9 +65,27 @@ export default function Home() {
     link.click();
   };
 
+  const saveApiKey = () => {
+    localStorage.setItem('openai-api-key', apiKey);
+    setShowSettings(false);
+  };
+
+  const clearApiKey = () => {
+    localStorage.removeItem('openai-api-key');
+    setApiKey('');
+  };
+
   return (
     <div className="p-12 max-w-5xl mx-auto">
-      <h1 className="text-3xl font-medium mb-12 tracking-tight">img-gen</h1>
+      <div className="flex justify-between items-center mb-12">
+        <h1 className="text-3xl font-medium tracking-tight">img-gen</h1>
+        <button
+          onClick={() => setShowSettings(true)}
+          className="px-4 py-2 border border-gray-300 text-sm hover:bg-gray-100 transition-colors"
+        >
+          settings
+        </button>
+      </div>
       
       <div className="mb-16">
         <input
@@ -109,6 +145,53 @@ export default function Home() {
           </div>
         ))}
       </div>
+
+      {showSettings && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
+          <div className="bg-white p-8 border border-gray-300 max-w-md w-full">
+            <h2 className="text-xl font-medium mb-6">settings</h2>
+            
+            <div className="mb-6">
+              <label className="block text-sm font-mono mb-2">OpenAI API Key</label>
+              <input
+                type="password"
+                value={apiKey}
+                onChange={(e) => setApiKey(e.target.value)}
+                placeholder="sk-..."
+                className="w-full p-3 border border-gray-300 text-black text-sm font-mono bg-white"
+              />
+            </div>
+            
+            <div className="mb-6 text-xs text-gray-600 font-mono leading-relaxed">
+              <p>• Your API key is stored only in your browser</p>
+              <p>• It never leaves your device or gets sent to our servers</p>
+              <p>• We use it directly to make requests to OpenAI on your behalf</p>
+              <p>• Clear your browser data to remove it completely</p>
+            </div>
+            
+            <div className="flex gap-3">
+              <button
+                onClick={saveApiKey}
+                className="px-6 py-2 border border-black bg-white text-black text-sm hover:bg-black hover:text-white transition-colors"
+              >
+                save
+              </button>
+              <button
+                onClick={clearApiKey}
+                className="px-6 py-2 border border-gray-300 bg-white text-black text-sm hover:bg-gray-100 transition-colors"
+              >
+                clear
+              </button>
+              <button
+                onClick={() => setShowSettings(false)}
+                className="px-6 py-2 border border-gray-300 bg-white text-black text-sm hover:bg-gray-100 transition-colors"
+              >
+                cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
