@@ -6,6 +6,9 @@ export default function Home() {
   const [generations, setGenerations] = useState([]);
   const [showSettings, setShowSettings] = useState(false);
   const [apiKey, setApiKey] = useState('');
+  const [size, setSize] = useState('1024x1024');
+  const [quality, setQuality] = useState('auto');
+  const [background, setBackground] = useState('opaque');
 
   useEffect(() => {
     const savedKey = localStorage.getItem('openai-api-key');
@@ -32,7 +35,10 @@ export default function Home() {
         },
         body: JSON.stringify({ 
           model: "gpt-image-1",
-          prompt 
+          prompt,
+          size,
+          quality,
+          background
         })
       });
       
@@ -155,6 +161,45 @@ export default function Home() {
               <label className="block text-sm font-mono mb-2">Model</label>
               <select className="w-full p-3 border border-gray-300 text-black text-sm font-mono bg-white">
                 <option value="gpt-image-1">gpt-image-1</option>
+              </select>
+            </div>
+
+            <div className="mb-6">
+              <label className="block text-sm font-mono mb-2">Size</label>
+              <select 
+                value={size}
+                onChange={(e) => setSize(e.target.value)}
+                className="w-full p-3 border border-gray-300 text-black text-sm font-mono bg-white"
+              >
+                <option value="1024x1024">1024x1024 (square)</option>
+                <option value="1024x1536">1024x1536 (portrait)</option>
+                <option value="1536x1024">1536x1024 (landscape)</option>
+              </select>
+            </div>
+
+            <div className="mb-6">
+              <label className="block text-sm font-mono mb-2">Quality</label>
+              <select 
+                value={quality}
+                onChange={(e) => setQuality(e.target.value)}
+                className="w-full p-3 border border-gray-300 text-black text-sm font-mono bg-white"
+              >
+                <option value="auto">auto</option>
+                <option value="low">low</option>
+                <option value="medium">medium</option>
+                <option value="high">high</option>
+              </select>
+            </div>
+
+            <div className="mb-6">
+              <label className="block text-sm font-mono mb-2">Background</label>
+              <select 
+                value={background}
+                onChange={(e) => setBackground(e.target.value)}
+                className="w-full p-3 border border-gray-300 text-black text-sm font-mono bg-white"
+              >
+                <option value="opaque">opaque</option>
+                <option value="transparent">transparent</option>
               </select>
             </div>
 
