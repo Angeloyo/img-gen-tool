@@ -40,6 +40,13 @@ export default function Home() {
     setGenerations(prev => prev.filter(g => g.id !== id));
   };
 
+  const downloadImage = (image, prompt) => {
+    const link = document.createElement('a');
+    link.download = `${prompt.slice(0, 30).replace(/[^a-zA-Z0-9]/g, '_')}.png`;
+    link.href = `data:image/png;base64,${image}`;
+    link.click();
+  };
+
   return (
     <div className="p-12 max-w-5xl mx-auto">
       <h1 className="text-3xl font-medium mb-12 tracking-tight">img-gen</h1>
@@ -82,12 +89,22 @@ export default function Home() {
             )}
             <div className="absolute inset-0 bg-black bg-opacity-70 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-between p-3">
               <p className="text-white text-xs font-mono line-clamp-3">{gen.prompt}</p>
-              <button
-                onClick={() => removeGeneration(gen.id)}
-                className="self-end px-2 py-1 text-xs bg-white text-black hover:bg-gray-200 transition-colors"
-              >
-                ×
-              </button>
+              <div className="flex gap-2 self-end">
+                {gen.status === 'complete' && (
+                  <button
+                    onClick={() => downloadImage(gen.image, gen.prompt)}
+                    className="px-2 py-1 text-xs bg-white text-black hover:bg-gray-200 transition-colors"
+                  >
+                    ↓
+                  </button>
+                )}
+                <button
+                  onClick={() => removeGeneration(gen.id)}
+                  className="px-2 py-1 text-xs bg-white text-black hover:bg-gray-200 transition-colors"
+                >
+                  ×
+                </button>
+              </div>
             </div>
           </div>
         ))}
