@@ -37,44 +37,44 @@ export default function Home() {
   };
 
   return (
-    <div className="p-8 max-w-4xl mx-auto">
-      <h1 className="text-2xl font-bold mb-6">Image Generator</h1>
+    <div className="p-12 max-w-5xl mx-auto">
+      <h1 className="text-3xl font-medium mb-12 tracking-tight">img-gen</h1>
       
-      <div className="mb-6">
+      <div className="mb-16">
         <input
           type="text"
           value={prompt}
           onChange={(e) => setPrompt(e.target.value)}
-          placeholder="Enter your image prompt..."
-          className="w-full p-3 border rounded-lg text-black"
+          placeholder="describe what you want to generate..."
+          className="w-full p-4 border border-gray-300 text-black text-sm font-mono bg-white"
         />
         <button
           onClick={generateImage}
-          className="mt-3 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+          className="mt-4 px-8 py-3 border border-black bg-white text-black text-sm font-medium hover:bg-black hover:text-white transition-colors"
         >
-          Generate
+          generate
         </button>
       </div>
       
-      <div className="grid gap-4">
+      <div className="space-y-8">
         {generations.map(gen => (
-          <div key={gen.id} className="border rounded-lg p-4">
-            <p className="mb-2 font-medium">{gen.prompt}</p>
+          <div key={gen.id} className="border border-gray-200 p-6">
+            <p className="mb-6 text-sm font-mono text-gray-600">{gen.prompt}</p>
             {gen.status === 'loading' && (
-              <div className="w-64 h-64 bg-gray-200 rounded flex items-center justify-center">
-                Loading...
+              <div className="w-72 h-72 border border-gray-200 flex items-center justify-center">
+                <span className="text-sm text-gray-500">generating...</span>
               </div>
             )}
             {gen.status === 'error' && (
-              <div className="w-64 h-64 bg-red-100 rounded flex items-center justify-center text-red-600">
-                Error: {gen.error}
+              <div className="w-72 h-72 border border-red-200 flex items-center justify-center text-red-600">
+                <span className="text-sm">error: {gen.error}</span>
               </div>
             )}
             {gen.status === 'complete' && (
               <img
                 src={`data:image/png;base64,${gen.image}`}
                 alt={gen.prompt}
-                className="w-64 h-64 object-cover rounded"
+                className="w-72 h-72 object-cover border border-gray-200"
               />
             )}
           </div>
